@@ -49,8 +49,11 @@ export default {
     .item {
       background white
       float left
-      padding 10px
+      padding 10px 20px
       overflow hidden
+      margin-right 1px
+      text-align center
+      margin-bottom 1px
       i{
         font-size 40px
       }
