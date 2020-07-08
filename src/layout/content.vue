@@ -7,7 +7,7 @@
                 :class="{on:inItem === index}">
               <p v-if="inItem === index">放在这里</p>
            </div>
-           <banner :type="item.type"></banner>
+           <all  :info="item"></all>
          </div>
          <div class="edit" v-if="index === nowIndex">
            <div class="up" @click="prev(index)" v-if="nowIndex!==0">
@@ -16,7 +16,7 @@
            <div class="down" @click="moveNext(index)" v-if="nowIndex !== pageList.length-1">
              <i class="el-icon-caret-bottom"></i>
            </div>
-           <div class="delete">
+           <div class="delete" @click="handleDelete(index)">
              <i class='el-icon-delete-solid'></i>
            </div>
          </div>
@@ -26,31 +26,58 @@
 </template>
 
 <script>
-import banner from '../components/banner'
+import util from '../utils/util'
+import Bus from '../utils/bus'
+import all from '../components/all'
+import { getConfig } from '../config/compoents'
 export default {
   name: 'Content',
   components: {
-    banner
+    all
   },
   data () {
     return {
       pageList: [],
       nowIndex: 0,
-      inItem: 99
+      inItem: 99,
+      config: {}
     }
+  },
+  mounted () {
+    this.config = getConfig()
+    Bus.$on('handleOptionChange', res => {
+      const list = this.pageList
+      list.forEach(item => {
+        if (item.compId === res.compId) {
+          item = res
+        }
+      })
+      this.pageList = list
+    })
   },
   methods: {
     drop_handler (e) {
       const data = e.dataTransfer.getData('cmp-type')
-      this.pageList.push({ type: data })
+      const config = JSON.parse(JSON.stringify(this.config))
+      const info = Object.assign({}, config[data])
+      info.compId = util.createDomID()
+      const { pageList } = this
+      pageList.push(info)
+      this.changeOptionConfig(info)
       this.nowIndex = this.pageList.length - 1
     },
     dragover_handler (e) {
     },
+    changeOptionConfig (info) {
+      Bus.$emit('resetOption')
+      Bus.$emit('changeOption', info)
+    },
     drop_handler_item (e, index) {
       const data = e.dataTransfer.getData('cmp-type')
-      const item = { type: data }
-      this.insert(index, item)
+      const info = this.config[data]
+      info.compId = util.createDomID()
+      this.insert(index, info)
+      this.changeOptionConfig(info)
       this.nowIndex = index
       this.inItem = 99
     },
@@ -58,29 +85,31 @@ export default {
       this.inItem = index
     },
     showEdit (index, item) {
+      this.changeOptionConfig(item)
+      console.log('changeOption', this.pageList[index])
       this.nowIndex = index
     },
     moveNext (index) {
-      console.log('next')
       const tmp = this.pageList[index + 1]
       this.$set(this.pageList, index + 1, this.pageList[index])
       this.$set(this.pageList, index, tmp)
       this.nowIndex = index + 1
     },
     prev (index) {
-      console.log('prev')
       const tmp = this.pageList[index]
-      console.log(this.pageList)
       this.$set(this.pageList, index, this.pageList[index - 1])
       this.$set(this.pageList, index - 1, tmp)
-      console.log(this.pageList)
       this.nowIndex = index - 1
     },
     insert (index, value) {
       const arr = this.pageList
       arr.splice(index, 0, value)
+    },
+    handleDelete (index) {
+      const arr = this.pageList
+      arr.splice(index, 1)
+      this.pageList = arr
     }
-
   }
 }
 </script>
@@ -92,8 +121,8 @@ export default {
     padding 20px
     overflow-y: scroll;
     .phone-content{
-      width 375px
-      min-height 675px
+      width 540px
+      min-height 960px
       margin 40px auto
       border 1px solid #eee;
       .place-holder{

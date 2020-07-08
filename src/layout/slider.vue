@@ -26,12 +26,6 @@ export default {
           icon: 'el-icon-picture',
           type: 'nav',
           option: {}
-        },
-        {
-          title: '图片',
-          icon: 'el-icon-picture',
-          type: 'img',
-          option: {}
         }
       ]
     }

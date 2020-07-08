@@ -4,7 +4,7 @@
     <div class="home">
       <Slider class="slider"/>
       <Phone class="phone"/>
-      <Option class="option"/>
+      <Option class="option" />
     </div>
   </div>
 </template>
