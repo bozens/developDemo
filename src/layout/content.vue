@@ -86,7 +86,6 @@ export default {
     },
     showEdit (index, item) {
       this.changeOptionConfig(item)
-      console.log('changeOption', this.pageList[index])
       this.nowIndex = index
     },
     moveNext (index) {

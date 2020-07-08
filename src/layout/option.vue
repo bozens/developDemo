@@ -31,7 +31,6 @@ export default {
   },
   mounted () {
     Bus.$on('changeOption', res => {
-      console.log('getOption', res)
       this.option = res
       this.type = res.type
     })

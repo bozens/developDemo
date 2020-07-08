@@ -5,7 +5,7 @@
         <div class="nav-item" v-for="(item,index) in navList" :key="index">
           <el-form ref="form" :model="item" label-width="80px">
             <el-form-item label="导航名称">
-              <el-input v-model="item.title"></el-input>
+              <el-input v-model="item.title" @click="changeOption"></el-input>
             </el-form-item>
             <el-form-item label="图标" >
               <div class="icon-box" @click="handleShowImgList(index)">
@@ -98,6 +98,9 @@ export default {
       this.nowOption.option.navs = navList
       Bus.$emit('handleOptionChange', this.nowOption)
       this.dialogTableVisible = false
+    },
+    changeOption () {
+      Bus.$emit('handleOptionChange', this.nowOption)
     },
     addNav () {
       const { navList } = this
